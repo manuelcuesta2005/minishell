@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <errno.h>
 #include "structs.h"
+#include <unistd.h>
 #include "../libft/libft.h"
 
 // init program
