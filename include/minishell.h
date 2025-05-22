@@ -9,7 +9,9 @@
 #include <signal.h>
 #include <errno.h>
 #include "structs.h"
+#include "../libft/libft.h"
 
-
-
+// init program
+void    get_variables(t_env **env, char **envp);
+char    *remove_spaces(char *input);
 #endif

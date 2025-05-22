@@ -16,42 +16,50 @@ LIBS = -lreadline
 SRCDIR = src
 OBJDIR = obj
 INCDIR = include
+LIBDIR = libft
 
 # Archivos fuente
-SRC = $(wildcard $(SRCDIR)/*.c)
+SRC = $(shell find $(SRCDIR) -name '*.c')
+OBJ = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 
-# Archivos objeto
-OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+# Libft
+LIBFT = $(LIBDIR)/libft.a
+LIBFT_INC = -I$(LIBDIR)
 
-# Colores para estética (opcional)
+# Colores
 GREEN = \033[0;32m
 NC = \033[0m
 
 # ****************************************************** #
 
-# Regla principal
-all: $(NAME)
+all: $(LIBFT) $(NAME)
 
-# Cómo construir el ejecutable
+# Compilar minishell
 $(NAME): $(OBJ)
 	@echo "$(GREEN)Compilando $(NAME)...$(NC)"
-	$(CC) $(CFLAGS) -I$(INCDIR) $^ -o $@ $(LIBS)
+	$(CC) $(CFLAGS) -I$(INCDIR) $(LIBFT_INC) $^ -o $@ $(LIBFT) $(LIBS)
 
-# Cómo compilar los .o
+# Compilar objetos
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -I$(INCDIR) $(LIBFT_INC) -c $< -o $@
+
+# Compilar libft
+$(LIBFT):
+	@echo "$(GREEN)Compilando libft...$(NC)"
+	@$(MAKE) -C $(LIBDIR)
 
 # Limpieza de objetos
 clean:
 	@rm -rf $(OBJDIR)
+	@$(MAKE) clean -C $(LIBDIR)
 
 # Limpieza total
 fclean: clean
 	@rm -f $(NAME)
+	@$(MAKE) fclean -C $(LIBDIR)
 
-# Recompilación completa
+# Recompilación
 re: fclean all
 
-# Phony (para evitar conflictos con archivos)
 .PHONY: all clean fclean re
