@@ -3,7 +3,9 @@
 
 typedef enum e_token_type
 {
-    T_WORD,
+    T_COMMAND,
+    T_FLAG,
+    T_ARGV,
     T_PIPE,
     T_REDIRECT_IN,
     T_REDIRECT_OUT,

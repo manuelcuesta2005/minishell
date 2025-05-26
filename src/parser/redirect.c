@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "minishell.h"
 
 int redirect_input(const char *filename)
 {
@@ -12,7 +12,8 @@ int redirect_input(const char *filename)
     return 0;
 }
 
-int redirect_output(const char *filename) {
+int redirect_output(const char *filename)
+{
     int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0) {
         perror("open");
@@ -62,7 +63,7 @@ int handle_heredoc(const char *delimiter)
 int handle_redirection(const char *operator, const char *target)
 {
     if (!operator || !target) {
-        ft_printf(stderr, "Error: redirección incompleta.\n");
+        fprintf(stderr, "Error: redirección incompleta.\n"); // Use ft_printf
         return -1;
     }
 
@@ -75,7 +76,7 @@ int handle_redirection(const char *operator, const char *target)
     } else if (strcmp(operator, "<<") == 0) {
         return handle_heredoc(target);
     } else {
-        ft_printf(stderr, "Error: operador de redirección desconocido: %s\n", operator);
+        fprintf(stderr, "Error: operador de redirección desconocido: %s\n", operator); // Use ft_printf
         return -1;
     }
 }
