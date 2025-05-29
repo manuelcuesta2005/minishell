@@ -25,8 +25,9 @@ typedef struct s_command
     char **argv;
     char *infile;
     char *outfile;
-    int append;
-    int heredoc;
+    char *heredoc;
+    char *append;
+    int  pipe;
     struct s_command *next;
 } t_command;
 

@@ -62,7 +62,7 @@ void    quotes_manage(char *input)
     {
         if ((input[i] == '"' || input[i] == '\'') && state_quote == 0)
             state_quote = 1;
-        else if (input[i] == state_quote)
+        else if ((input[i] == '"' || input[i] == '\'') && state_quote == 1)
             state_quote = 0;
         else if (input[i] == ' ' && state_quote)
             input[i] = '\x01';

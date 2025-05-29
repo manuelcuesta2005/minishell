@@ -47,21 +47,24 @@ void	token_lstadd_back(t_token **lst, t_token *new)
 
 t_token	*tokenize_input(char *input)
 {
-	char			*copy;
-	char			*token;
+	char			**split_args;
 	t_token			*tokens = NULL;
 	t_token			*input_tokenizer;
 	t_token_type	type;
 
-	copy = ft_strdup(input);
-	token = strtok(copy, " ");
-	while (token)
+	quotes_manage(input);
+	split_args = ft_split(input, ' ');
+	if (!split_args)
+		return (NULL);
+	while (*split_args)
 	{
-		type = get_token_type(token);
-		input_tokenizer = create_token(token, type);
+		restore_quotes(*split_args);
+		type = get_token_type(*split_args);
+		input_tokenizer = create_token(*split_args, type);
 		token_lstadd_back(&tokens, input_tokenizer);
-		token = strtok(NULL, " ");
+		free(*split_args);
+		split_args++;
 	}
-	free(copy);
+	free(*split_args);
 	return (tokens);
 }
