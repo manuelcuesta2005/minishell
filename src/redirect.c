@@ -1,4 +1,5 @@
 #include "../include/minishell.h"
+#include "structs.h"
 
 int redirect_input(const char *filename)
 {
