@@ -2,56 +2,60 @@
 #                              MAKEFILE PARA MINISHELL                         #
 # **************************************************************************** #
 
-# Nombre del ejecutable
-NAME = minishell
+NAME        = minishell
 
-# Compilador y flags
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CC          = cc
+CFLAGS      = -Wall -Wextra -Werror 
 
-# Librerías externas
-LIBS = -lreadline
+LIBS        = -lreadline
 
-# Directorios
-SRCDIR = src
-OBJDIR = obj
-INCDIR = include
+SRCDIR      = src
+OBJDIR      = obj
+INCDIR      = include
+LIBDIR      = libft
+PRINTDIR    = ft_printf
 
-# Archivos fuente
-SRC = $(wildcard $(SRCDIR)/*.c)
+SRC         = $(shell find $(SRCDIR) -name '*.c')
+OBJ         = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 
-# Archivos objeto
-OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+LIBFT       = $(LIBDIR)/libft.a
+FT_PRINTF   = $(PRINTDIR)/libftprintf.a
 
-# Colores para estética (opcional)
-GREEN = \033[0;32m
-NC = \033[0m
+INC_FLAGS   = -I$(INCDIR) -I$(LIBDIR) -I$(PRINTDIR)
+
+GREEN       = \033[0;32m
+NC          = \033[0m
 
 # ****************************************************** #
 
-# Regla principal
-all: $(NAME)
+all: $(LIBFT) $(FT_PRINTF) $(NAME)
 
-# Cómo construir el ejecutable
 $(NAME): $(OBJ)
 	@echo "$(GREEN)Compilando $(NAME)...$(NC)"
-	$(CC) $(CFLAGS) -I$(INCDIR) $^ -o $@ $(LIBS)
+	$(CC) $(CFLAGS) $(INC_FLAGS) $^ -o $@ $(LIBFT) $(FT_PRINTF) $(LIBS)
 
-# Cómo compilar los .o
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INC_FLAGS) -c $< -o $@
 
-# Limpieza de objetos
+$(LIBFT):
+	@echo "$(GREEN)Compilando libft...$(NC)"
+	@$(MAKE) -C $(LIBDIR)
+
+$(FT_PRINTF):
+	@echo "$(GREEN)Compilando ft_printf...$(NC)"
+	@$(MAKE) -C $(PRINTDIR)
+
 clean:
 	@rm -rf $(OBJDIR)
+	@$(MAKE) clean -C $(LIBDIR)
+	@$(MAKE) clean -C $(PRINTDIR)
 
-# Limpieza total
 fclean: clean
 	@rm -f $(NAME)
+	@$(MAKE) fclean -C $(LIBDIR)
+	@$(MAKE) fclean -C $(PRINTDIR)
 
-# Recompilación completa
 re: fclean all
 
-# Phony (para evitar conflictos con archivos)
 .PHONY: all clean fclean re

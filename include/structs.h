@@ -3,7 +3,9 @@
 
 typedef enum e_token_type
 {
-    T_WORD,
+    T_COMMAND,
+    T_FLAG,
+    T_ARGV,
     T_PIPE,
     T_REDIRECT_IN,
     T_REDIRECT_OUT,
@@ -23,8 +25,9 @@ typedef struct s_command
     char **argv;
     char *infile;
     char *outfile;
-    int append;
-    int heredoc;
+    char *heredoc;
+    char *append;
+    int  pipe;
     struct s_command *next;
 } t_command;
 
