@@ -17,51 +17,68 @@ t_command   *create_command(void)
     return(new_command);
 }
 
-void    update_command(t_command *command, t_token *token)
+void update_command(t_command *cmd, t_token *token)
 {
-    char    *value;
+    char *value;
+    char **target = NULL;
 
+    if (!token->next)
+        return ;
     value = ft_strdup(token->next->value);
+    if (!value)
+        return ;
     if (token->token_type == T_REDIRECT_IN)
-        command->infile = value;
+        target = &cmd->infile;
     else if (token->token_type == T_REDIRECT_OUT)
-        command->outfile = value;
+        target = &cmd->outfile;
     else if (token->token_type == T_APPEND)
-        command->append = value;
+        target = &cmd->append;
     else if (token->token_type == T_HEREDOC)
-        command->heredoc = value;
+        target = &cmd->heredoc;
+    if (target)
+    {
+        free(*target);
+        *target = value;
+    }
     else if (token->token_type == T_PIPE)
-        command->pipe = 1;
+    {
+        cmd->pipe = 1;
+        free(value);
+    }
 }
 
 void    add_args_command(t_command *command, char *token)
 {
-    int i;
-    int j;
-    char    **args;
+    int     i;
+    int     count;
+    char    **new_argv;
 
-    i = 0;
-    j = 0;
-    while (command->argv && command->argv[i])
-        i++;
-    args = malloc(sizeof(char *) * (i + 2));
-    if (!args)
+    if (!token || !command)
         return ;
-    while (j < i)
+    i = 0;
+    count = 0;
+    while(command->argv && command->argv[count])
+        count++;
+    new_argv = malloc(sizeof(char *) * (count + 2));
+    if (!new_argv)
+        return ;
+    while (i < count)
     {
-        args[j] = ft_strdup(command->argv[j]);
-        j++;
+        new_argv[i] = ft_strdup(command->argv[i]);
+        i++;
     }
-    args[i] = ft_strdup(token);
-    args[i + 1] = NULL;
+    new_argv[i++] = ft_strdup(token);
+    new_argv[i] = NULL;
     free(command->argv);
-    command->argv = args;
+    command->argv = new_argv;
 }
 
 void    add_command_list(t_command **commands, t_command *new)
 {
     t_command   *temporal;
 
+    if (!new)
+        return ;
     if (!*commands)
     {
         *commands = new;

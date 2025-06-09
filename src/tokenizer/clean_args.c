@@ -91,7 +91,11 @@ void    pre_process(t_shell *shell)
         return ;
     string = remove_spaces(shell->input);
     if (!string)
+    {
+        free(shell->input);
+        shell->input = NULL;
         return ;
+    }
     quotes_manage(string);
     normalize_spaces(string);
     restore_quotes(string);

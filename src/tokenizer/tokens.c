@@ -48,12 +48,14 @@ void	token_lstadd_back(t_token **lst, t_token *new)
 t_token	*tokenize_input(char *input)
 {
 	char			**split_args;
+	char			**temporal_strings;
 	t_token			*tokens = NULL;
-	t_token			*input_tokenizer;
+	t_token			*input_tokenizer = NULL;
 	t_token_type	type;
 
 	quotes_manage(input);
 	split_args = ft_split(input, ' ');
+	temporal_strings = split_args;
 	if (!split_args)
 		return (NULL);
 	while (*split_args)
@@ -65,6 +67,6 @@ t_token	*tokenize_input(char *input)
 		free(*split_args);
 		split_args++;
 	}
-	free(*split_args);
+	free(temporal_strings);
 	return (tokens);
 }
