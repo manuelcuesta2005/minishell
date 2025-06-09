@@ -37,8 +37,9 @@ void	new_env(t_env **env, char *key, char *value)
 	new = (t_env *) malloc(sizeof(t_env));
 	if (!new)
 		return ;
-	new->key = key;
-	new->value = value;
+	ft_memset(new, 0, sizeof(t_env));
+	new->key = ft_strdup(key);
+	new->value = ft_strdup(value);
 	new->next = NULL;
 	if (!(*env))
 		*env = new;
@@ -46,7 +47,7 @@ void	new_env(t_env **env, char *key, char *value)
 	{
 		temporal = *env;
 		while (temporal->next)
-			temporal = temporal->next;
+		temporal = temporal->next;
 		temporal->next = new;
 	}
 }
@@ -63,7 +64,11 @@ void    get_variables(t_env **env, char **envp)
 		key = get_key(envp[i]);
 		value = get_value(envp[i]);
 		if (key && value)
+		{
 			new_env(env, key, value);
+			free(key);
+			free(value);
+		}
 		else
 		{
 			free(key);

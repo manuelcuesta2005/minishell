@@ -14,6 +14,12 @@
 #include "../libft/libft.h"
 #include "../ft_printf/ft_printf.h"
 
+// Init program
+t_command    *init_commands(void);
+t_token      *init_tokens(void);
+t_env        *init_env(void);
+t_shell      *init_minishell(void);
+
 // enviroment
 char    *get_key(char *env);
 char    *get_value(char *env);
@@ -53,5 +59,12 @@ int redirect_output(const char *filename);
 int redirect_output_append(const char *filename);
 int handle_heredoc(const char *delimiter);
 int handle_redirection(const char *operator, const char *target);
+
+// Free memory
+void    free_env_list(t_env *env);
+void    free_tokens(t_token *tokens);
+void    free_command(t_command *commands);
+void    free_command_list(t_command *commands);
+void    free_minishell(t_shell *minishell);
 
 #endif
