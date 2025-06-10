@@ -36,7 +36,6 @@ void    free_command(t_command *commands)
         free(commands->heredoc);
     if (commands->append)
         free(commands->append);
-    free(commands);
 }
 
 void    free_command_list(t_command *commands)

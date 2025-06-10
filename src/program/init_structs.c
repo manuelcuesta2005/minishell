@@ -1,22 +1,5 @@
 #include "minishell.h"
 
-t_command    *init_commands(void)
-{
-    t_command   *commands;
-
-    commands = (t_command *) malloc(sizeof(t_command));
-    if (!commands)
-        return (NULL);
-    commands->argv = NULL;
-    commands->append = NULL;
-    commands->heredoc = NULL;
-    commands->infile = NULL;
-    commands->outfile = NULL;
-    commands->pipe = 0;
-    commands->next = NULL;
-    return (commands);
-}
-
 t_token    *init_tokens(void)
 {
     t_token *tokens;
@@ -53,12 +36,10 @@ t_shell *init_minishell(void)
     minishell->input = NULL;
     minishell->history = 0;
     minishell->tokens = NULL;
-    minishell->commands = init_commands();
+    minishell->commands = NULL;
     minishell->env = init_env();
-    if (!minishell->commands || !minishell->env)
+    if (!minishell->env)
     {
-        free_command_list(minishell->commands);
-        free_env_list(minishell->env);
         free(minishell);
         return (NULL);
     }

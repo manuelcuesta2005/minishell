@@ -49,6 +49,7 @@ t_token	   *tokenize_input(char *input);
 t_command   *create_command(void);
 void    update_command(t_command *command, t_token *token);
 void    add_args_command(t_command *command, char *token);
+int     command_empty(t_command *command);
 void    add_command_list(t_command **commands, t_command *new);
 int     can_execute(t_token *tokens);
 void    parser(t_command **commands, t_token *tokens);

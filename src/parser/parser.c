@@ -30,8 +30,8 @@ int can_execute(t_token *tokens)
 
 void  parser(t_command **commands, t_token *tokens)
 {
-    t_command   *command;
     int         added;
+    t_command   *command = NULL;
 
     if (!tokens || !can_execute(tokens))
         return ;
@@ -47,10 +47,7 @@ void  parser(t_command **commands, t_token *tokens)
             add_command_list(commands, command);
             command = create_command();
             if (!command)
-            {
                 free_command_list(*commands);
-                return ;
-            }
             added = 1;
         }
         else
