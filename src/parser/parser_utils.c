@@ -4,7 +4,7 @@ t_command   *create_command(void)
 {
     t_command   *new_command;
 
-    new_command = (t_command *) malloc(sizeof(t_command));
+    new_command = malloc(sizeof(t_command));
     if (!new_command)
         return (NULL);
     new_command->argv = NULL;
@@ -50,12 +50,12 @@ void update_command(t_command *cmd, t_token *token)
 void    add_args_command(t_command *command, char *token)
 {
     int     i;
+    int     j;
     int     count;
     char    **new_argv;
 
-    if (!token || !command)
-        return ;
     i = 0;
+    j = 0;
     count = 0;
     while(command->argv && command->argv[count])
         count++;
@@ -69,16 +69,25 @@ void    add_args_command(t_command *command, char *token)
     }
     new_argv[i++] = ft_strdup(token);
     new_argv[i] = NULL;
+    while (j < count)
+        free(command->argv[j++]);
     free(command->argv);
     command->argv = new_argv;
 }
 
+int  command_empty(t_command *command)
+{
+    return (!command->argv && !command->infile && !command->heredoc && !command->outfile);
+}
 void    add_command_list(t_command **commands, t_command *new)
 {
     t_command   *temporal;
 
-    if (!new)
+    if (!new || command_empty(new))
+    {
+        free_command(new);
         return ;
+    }
     if (!*commands)
     {
         *commands = new;
