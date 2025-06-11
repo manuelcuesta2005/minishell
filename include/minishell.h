@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/ioctl.h>
 #include <signal.h>
 #include <errno.h>
 #include "structs.h"
@@ -68,4 +69,6 @@ void    free_command(t_command *commands);
 void    free_command_list(t_command *commands);
 void    free_minishell(t_shell *minishell);
 
+// Executer
+void    init_signals(void);
 #endif
