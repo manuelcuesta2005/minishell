@@ -77,3 +77,26 @@ void    get_variables(t_env **env, char **envp)
 		i++;
 	}
 }
+
+char	*get_env(char **env, char *arg)
+{
+	int		i;
+	char	**split;
+
+	i = 0;
+	while (env[i])
+	{
+		split = ft_split(env[i], '=');
+		if (ft_strcmp(split[0], arg) == 0)
+		{
+			free(split);
+			break ;
+		}
+		else
+			i++;
+		free(split);
+	}
+	if (env[i] == NULL)
+		return (NULL);
+	return (env[i]);
+}

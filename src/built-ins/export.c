@@ -14,14 +14,6 @@ static char	**get_key_value_pair(char *argv)
 	return (tmp);
 }
 
-int	exp_built_in(t_shell *data, char **argv)
+int	export_builtin(t_shell *data, char **args)
 {
-	int		i;
-	char	**tmp;
-	int		ret;
-
-	ret = EXIT_SUCCESS;
-	i = 1;
-	if (!args[i])
-		return ()
 }
