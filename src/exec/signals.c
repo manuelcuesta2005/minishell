@@ -4,13 +4,12 @@ int     g_context;
 
 static void     aux_signals(int signal)
 {
+    (void)signal;
     if (g_context == 3)
     {
         write(STDOUT_FILENO, "\n", 1);
         g_context = 4;
     }
-    else if (g_context == 0 || g_context == 2)
-        g_context = signal;
 }
 static void    handle_signals(int signal)
 {

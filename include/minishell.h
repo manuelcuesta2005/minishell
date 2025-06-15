@@ -28,6 +28,8 @@ void	new_env(t_env **env, char *key, char *value);
 void    get_variables(t_env **env, char **envp);
 
 // built-ins
+int	ft_echo(t_shell *data, t_command *simple_cmd);
+int	ft_unset(char **a, t_shell *data);
 int	ft_env(t_env *env);
 int	ft_pwd(void);
 
