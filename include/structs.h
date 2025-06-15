@@ -31,6 +31,16 @@ typedef struct s_command
     struct s_command *next;
 } t_command;
 
+typedef struct s_job
+{
+	struct s_job	*previous;
+	char			**cmd;
+	char			**file;
+	int				fd[2];
+	pid_t			pid;
+	struct s_job	*next;
+}				t_job;
+
 typedef struct s_env
 {
     char *key;
