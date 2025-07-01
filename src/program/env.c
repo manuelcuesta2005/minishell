@@ -87,7 +87,7 @@ char	*get_env(char **env, char *arg)
 	while (env[i])
 	{
 		split = ft_split(env[i], '=');
-		if (ft_strcmp(split[0], arg) == 0)
+		if (ft_strncmp(split[0], arg, ft_strlen(arg)) == 0)
 		{
 			free(split);
 			break ;

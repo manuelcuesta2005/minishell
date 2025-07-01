@@ -24,13 +24,15 @@ t_shell      *init_minishell(void);
 // enviroment
 char    *get_key(char *env);
 char    *get_value(char *env);
+char	*get_env(char **env, char *arg);
 void	new_env(t_env **env, char *key, char *value);
 void    get_variables(t_env **env, char **envp);
 
 // built-ins
-int	ft_echo(t_shell *data, t_command *simple_cmd);
+// int	ft_echo(t_shell *data, t_command *simple_cmd);
 int	ft_unset(char **a, t_shell *data);
 int	ft_env(t_env *env);
+// int	ft_cd(t_shell *shell, char *arg);
 int	ft_pwd(void);
 
 // clean args
@@ -73,4 +75,14 @@ void    free_minishell(t_shell *minishell);
 
 // Executer
 void    init_signals(void);
+int     exec_builtin_child(t_shell *shell, t_command *command);
+char    *filter_path(t_env *envp, char *key);
+int executor(t_shell *shell);
+
+// Utils
+char    *ft_strjoin_free(char *s1, char *s2, int mode);
+char    **env_list_to_array(t_env *envp);
+void    ft_free_array(char **array);
+int only_execute(t_shell *shell, t_command *command, t_env *envp);
+
 #endif

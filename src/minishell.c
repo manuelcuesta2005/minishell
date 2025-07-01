@@ -25,6 +25,8 @@ int main(int argc, char **argv, char **envp)
         minishell->tokens = tokenize_input(minishell->input);
         minishell->commands = NULL;
 		parser(&minishell->commands, minishell->tokens);
+        if (minishell->commands)
+            executor(minishell);
         free(minishell->input);
         free_tokens(minishell->tokens);
         free_command_list(minishell->commands);
