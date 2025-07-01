@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/01 15:01:35 by mcuesta-          #+#    #+#             */
+/*   Updated: 2025/07/01 15:01:38 by mcuesta-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 #include "../../include/structs.h"
 
@@ -11,7 +23,7 @@ static size_t	env_size(char *env)
 	return (i);
 }
 
-static void		free_node(t_shell *data, t_env *env)
+static void	free_node(t_shell *data, t_env *env)
 {
 	if (data->env == env && env->next == NULL)
 	{

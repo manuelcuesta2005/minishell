@@ -1,27 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/01 14:30:08 by mcuesta-          #+#    #+#             */
+/*   Updated: 2025/07/01 14:30:12 by mcuesta-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char *get_key(char *env)
+char	*get_key(char *env)
 {
-    int		i;
-    char	*set_key;
+	int		i;
+	char	*set_key;
 
-    i = 0;
-    while (env[i] && env[i] != '=')
+	i = 0;
+	while (env[i] && env[i] != '=')
 		i++;
 	set_key = malloc(i + 1);
 	if (!set_key)
 		return (NULL);
 	ft_strlcpy(set_key, env, i + 1);
-    return(set_key);
+	return (set_key);
 }
 
-char *get_value(char *env)
+char	*get_value(char *env)
 {
 	int		i;
 	char	*set_value;
 
 	i = 0;
-	while(env[i] && env[i] != '=')
+	while (env[i] && env[i] != '=')
 		i++;
 	if (!env[i])
 		return (NULL);
@@ -34,7 +46,7 @@ void	new_env(t_env **env, char *key, char *value)
 	t_env	*new;
 	t_env	*temporal;
 
-	new = (t_env *) malloc(sizeof(t_env));
+	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
 		return ;
 	ft_memset(new, 0, sizeof(t_env));
@@ -47,14 +59,14 @@ void	new_env(t_env **env, char *key, char *value)
 	{
 		temporal = *env;
 		while (temporal->next)
-		temporal = temporal->next;
+			temporal = temporal->next;
 		temporal->next = new;
 	}
 }
 
-void    get_variables(t_env **env, char **envp)
+void	get_variables(t_env **env, char **envp)
 {
-    int		i;
+	int		i;
 	char	*key;
 	char	*value;
 
