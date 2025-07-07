@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:33:37 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:33:44 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/05 12:45:08 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_builtin_child(t_shell *shell, t_command *command)
+int	exec_builtin(t_shell *shell, t_command *command)
 {
 	char	*name_command;
 
@@ -20,11 +20,19 @@ int	exec_builtin_child(t_shell *shell, t_command *command)
 	if (!name_command)
 		return (0);
 	if (ft_strncmp(name_command, "echo", 4) == 0)
-		return (ft_echo(shell, command));
+		return (ft_echo(command->argv));
 	else if (ft_strncmp(name_command, "env", 3) == 0)
-		return (ft_env(shell->env));
+		return (ft_env(shell, command->argv));
 	else if (ft_strncmp(name_command, "pwd", 3) == 0)
 		return (ft_pwd());
+	else if (ft_strncmp(name_command, "cd", 2) == 0)
+		return(ft_cd(shell, command->argv[1]));
+	else if (ft_strcmp(name_command, "export") == 0)
+		return (ft_export(shell, command->argv));
+	else if (ft_strcmp(name_command, "exit") == 0)
+		return (ft_exit(command->argv, command, shell), 0);
+	else if (ft_strcmp(name_command, "unset") == 0)
+		return (ft_unset(command->argv, shell));
 	return (-1);
 }
 
@@ -43,10 +51,16 @@ char	*ft_strjoin_free(char *s1, char *s2, int mode)
 	result = malloc(len1 + len2 + 1);
 	if (!result)
 		return (NULL);
-	while (i++ < len1)
+	while (i < len1)
+	{
 		result[i] = s1[i];
-	while (j++ < len2)
+		i++;
+	}
+	while (j < len2)
+	{
 		result[i + j] = s2[j];
+		j++;
+	}
 	result[i + j] = '\0';
 	if (mode == 1 || mode == 3)
 		free(s1);

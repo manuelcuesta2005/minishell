@@ -3,49 +3,52 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:00:31 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 15:00:33 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/07 13:17:10 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "structs.h"
 
-void	put_lines(int i, char **s, int out)
+static int	is_n_flag(const char *str)
 {
-	while (s[i])
-	{
-		ft_putstr_fd(s[i++], out);
-		if (s[i])
-			ft_putchar_fd(' ', out);
-	}
-}
+	int	i;
 
-int	ft_echo(t_shell *data, t_command *simple_cmd)
-{
-	int		i;
-	int		j;
-	bool	n_option;
-
-	i = 1;
-	n_option = false;
-	(void)data;
-	while (simple_cmd->argv[i] && simple_cmd->argv[i][0] == '-'
-		&& simple_cmd->argv[i][1] == 'n')
+	if (!str || str[0] != '-' || str[1] != 'n')
+		return (0);
+	i = 2;
+	while (str[i])
 	{
-		j = 1;
-		while (simple_cmd->argv[i][j] == 'n')
-			j++;
-		if (simple_cmd->argv[i][j] == '\0')
-			n_option = true;
-		else
-			break ;
+		if (str[i] != 'n')
+			return (0);
 		i++;
 	}
-	put_lines(i, simple_cmd->argv, STDOUT_FILENO);
-	if (n_option == false)
-		ft_putchar_fd('\n', STDOUT_FILENO);
-	return (EXIT_SUCCESS);
+	return (1);
+}
+
+int	ft_echo(char **args)
+{
+	int	i;
+	int	n_option;
+
+	i = 1;
+	n_option = 0;
+	while (args[i] && is_n_flag(args[i]))
+	{
+		n_option = 1;
+		i++;
+	}
+	while (args[i])
+	{
+		ft_putstr_fd(args[i], 1);
+		if (args[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if (!n_option)
+		write(1, "\n", 1);
+	return (0);
 }

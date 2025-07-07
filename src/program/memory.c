@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:30:41 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:30:44 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:24:46 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	free_command_list(t_command *commands)
 	{
 		temporal = commands->next;
 		free_command(commands);
+		free(commands);
 		commands = temporal;
 	}
 }

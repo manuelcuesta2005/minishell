@@ -3,52 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:00:17 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 15:00:21 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/07 13:32:56 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "../../include/minishell.h"
-// #include "../../include/structs.h"
+#include "../../include/minishell.h"
+#include "../../include/structs.h"
 
-// void	set_pwd(char *arg, char	*c)
-// {
-// 	char	*string;
-// 	t_shell	env;
+int	change_directory(const char *arg, char *oldpwd)
+{
+	if (chdir(arg) == -1)
+	{
+		perror("cd");
+		free(oldpwd);
+		return (1);
+	}
+	return (0);
+}
 
-// 	string = ft_strjoin(arg, c);
-// 	new_env(&env.env, string, NULL);
-// 	free (string);
-// }
+int	update_env_vars(t_shell *env, char *cwd, char *oldpwd)
+{
+	if (!getcwd(cwd, PATH_MAX))
+	{
+		perror("cd (getcwd after)");
+		free(oldpwd);
+		return (1);
+	}
+	set_env(&env->env, "OLDPWD", oldpwd);
+	set_env(&env->env, "PWD", cwd);
+	free(oldpwd);
+	return (0);
+}
 
-// int	ft_cd(char *arg)
-// {
-// 	char	c[9999];
+int	ft_cd(t_shell *env, char *arg)
+{
+	char	cwd[PATH_MAX];
+	char	*oldpwd;
 
-// 	t_shell env;
-// 	if (arg == NULL)
-// 	{
-// 		arg = get_env(env.env, "HOME") + 5;
-// 		if ((arg - 5) == NULL)
-// 		{
-// 			printf("cd: HOME not set\n");
-// 			return (1);
-// 		}
-// 	}
-// 	getcwd(c, sizeof(c));
-// 	if (chdir(arg) == -1)
-// 	{
-// 		if (arg[0] == '\0')
-// 			return (1);
-// 		ft_putstr_fd("cd: ", 2);
-// 		ft_putstr_fd(arg, 2);
-// 		ft_putendl_fd(": No such file or directory", 2);
-// 		return (1);
-// 	}
-// 	set_pwd("OLDPWD=", c);
-// 	getcwd(c, sizeof(c));
-// 	set_pwd("PWD=", c);
-// 	return (0);
-// }
+	arg = get_cd_target(env, arg);
+	if (!arg)
+		return (1);
+	if (!get_current_directory(cwd))
+		return (1);
+	oldpwd = ft_strdup(cwd);
+	if (!oldpwd)
+		return (1);
+	if (change_directory(arg, oldpwd))
+		return (1);
+	return (update_env_vars(env, cwd, oldpwd));
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:34:08 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:34:09 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/05 17:10:16 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,9 @@ int	handle_heredoc(const char *delimiter)
 		free(line);
 	}
 	close(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
-	return (0);
+	return (pipefd[0]); // devolvemos el FD del heredoc
 }
+
 
 int	handle_redirection(const char *operator, const char *target)
 {

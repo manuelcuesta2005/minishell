@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:39:10 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:39:12 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/05 17:45:35 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,14 @@ typedef struct s_shell
 	t_token				*tokens;
 	t_command			*commands;
 }						t_shell;
+
+typedef struct s_exec_child_args
+{
+    t_shell     *shell;
+    t_command   *cmd;
+    int         **pipes;
+    int         index;
+    int         cmd_count;
+}   t_exec_child_args;
 
 #endif

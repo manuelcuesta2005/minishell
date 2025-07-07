@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:30:08 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:30:12 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:41:59 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,16 @@ char	*get_key(char *env)
 
 char	*get_value(char *env)
 {
-	int		i;
-	char	*set_value;
+	int	i;
 
+	if (!env)
+		return (NULL);
 	i = 0;
 	while (env[i] && env[i] != '=')
 		i++;
 	if (!env[i])
-		return (NULL);
-	set_value = ft_strdup(env + i + 1);
-	return (set_value);
+		return (ft_strdup(""));
+	return (ft_strdup(env + i + 1));
 }
 
 void	new_env(t_env **env, char *key, char *value)
@@ -51,7 +51,18 @@ void	new_env(t_env **env, char *key, char *value)
 		return ;
 	ft_memset(new, 0, sizeof(t_env));
 	new->key = ft_strdup(key);
+	if (!new->key)
+	{
+		free(new);
+		return ;
+	}
 	new->value = ft_strdup(value);
+	if (!new->value)
+	{
+		free(new->key);
+		free(new);
+		return ;
+	}
 	new->next = NULL;
 	if (!(*env))
 		*env = new;
@@ -90,25 +101,14 @@ void	get_variables(t_env **env, char **envp)
 	}
 }
 
-char	*get_env(char **env, char *arg)
+char	*get_env(t_env *env, const char *key)
 {
-	int		i;
-	char	**split;
-
-	i = 0;
-	while (env[i])
+	while (env)
 	{
-		split = ft_split(env[i], '=');
-		if (ft_strncmp(split[0], arg, ft_strlen(arg)) == 0)
-		{
-			free(split);
-			break ;
-		}
-		else
-			i++;
-		free(split);
+		if (env->key && env->value && ft_strncmp(env->key, key, ft_strlen(key)
+				+ 1) == 0)
+			return (env->value);
+		env = env->next;
 	}
-	if (env[i] == NULL)
-		return (NULL);
-	return (env[i]);
+	return (NULL);
 }
