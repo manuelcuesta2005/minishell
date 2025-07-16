@@ -86,10 +86,10 @@ void		add_args_command(t_command *command, char *token);
 int			command_empty(t_command *command);
 void		add_command_list(t_command **commands, t_command *new);
 int			can_execute(t_token *tokens);
-void		parser(t_command **commands, t_token *tokens);
+void		parser(t_command **commands, t_token *tokens, t_shell *shell);
 char		*remove_quotes(const char *arg);
 void		clean_arguments(t_command *cmd);
-char		*expand_variables_simple(const char *input);
+char		*expand_variables(const char *input, t_env *env, int last_status);
 
 // redirect
 int			redirect_input(const char *filename);
@@ -97,6 +97,7 @@ int			redirect_output(const char *filename);
 int			redirect_output_append(const char *filename);
 int			handle_heredoc(const char *delimiter);
 int			handle_redirection(const char *operator, const char * target);
+int			create_heredoc(const char *delimiter, t_env *env);
 
 // Free memory
 void		free_env_list(t_env *env);

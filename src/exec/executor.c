@@ -21,20 +21,15 @@ void	put_error(void)
 
 static int	apply_redirs(t_command *command)
 {
-	int	heredoc_fd;
-
-	if (command->heredoc)
+	if (command->heredoc != -1)
 	{
-		heredoc_fd = handle_heredoc(command->heredoc);
-		if (heredoc_fd == -1)
-			return (-1);
-		if (dup2(heredoc_fd, STDIN_FILENO) == -1)
+		if (dup2(command->heredoc, STDIN_FILENO) == -1)
 		{
 			perror("dup2");
-			close(heredoc_fd);
+			close(command->heredoc);
 			return (-1);
 		}
-		close(heredoc_fd);
+		close(command->heredoc);
 	}
 	if (command->infile && redirect_input(command->infile) == -1)
 		return (-1);

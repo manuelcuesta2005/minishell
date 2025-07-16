@@ -35,9 +35,11 @@ void	set_env(t_env **env, const char *key, const char *value)
 
 char	*get_env_value(t_env *env, const char *key)
 {
+	if (!key)
+		return (NULL);
 	while (env)
 	{
-		if (ft_strcmp(env->key, key) == 0)
+		if (env->key && ft_strcmp(env->key, key) == 0)
 			return (env->value);
 		env = env->next;
 	}

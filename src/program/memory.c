@@ -44,8 +44,6 @@ void	free_command(t_command *commands)
 		free(commands->infile);
 	if (commands->outfile)
 		free(commands->outfile);
-	if (commands->heredoc)
-		free(commands->heredoc);
 	if (commands->append)
 		free(commands->append);
 }

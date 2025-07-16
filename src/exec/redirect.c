@@ -80,7 +80,7 @@ int	handle_heredoc(const char *delimiter)
 		free(line);
 	}
 	close(pipefd[1]);
-	return (pipefd[0]); // devolvemos el FD del heredoc
+	return (pipefd[0]);
 }
 
 
@@ -91,9 +91,9 @@ int	handle_redirection(const char *operator, const char *target)
 		fprintf(stderr, "Error: redirección incompleta.\n");
 		return (-1);
 	}
-	if (strcmp(operator, "<") == 0)
+	if (ft_strcmp(operator, "<") == 0)
 		return (redirect_input(target));
-	else if (strcmp(operator, ">") == 0)
+	else if (ft_strcmp(operator, ">") == 0)
 		return (redirect_output(target));
 	else if (strcmp(operator, ">>") == 0)
 		return (redirect_output_append(target));

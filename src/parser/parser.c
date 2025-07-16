@@ -46,47 +46,6 @@ int	can_execute(t_token *tokens)
 	return (1);
 }
 
-void	parser(t_command **commands, t_token *tokens)
-{
-	int				added;
-	t_command		*command;
-	t_token_type	prev_type;
-
-	prev_type = -1;
-	command = NULL;
-	if (!tokens || !can_execute(tokens))
-		return ;
-	command = create_command();
-	while (tokens)
-	{
-		if (tokens->token_type == T_COMMAND || tokens->token_type == T_ARGV
-			|| tokens->token_type == T_FLAG)
-		{
-			// Evitar agregar argumento si viene de una redirección
-			if (prev_type != T_REDIRECT_IN && prev_type != T_REDIRECT_OUT
-				&& prev_type != T_APPEND && prev_type != T_HEREDOC)
-				add_args_command(command, tokens->value);
-		}
-		else
-			update_command(command, tokens);
-		if (tokens->token_type == T_PIPE)
-		{
-			add_command_list(commands, command);
-			command = create_command();
-			if (!command)
-				free_command_list(*commands);
-			added = 1;
-		}
-		else
-			added = 0;
-		prev_type = tokens->token_type;
-		tokens = tokens->next;
-	}
-	if (command && !added)
-		add_command_list(commands, command);
-	else
-		free_command(command);
-}
 
 char	*remove_quotes(const char *arg)
 {
@@ -95,7 +54,7 @@ char	*remove_quotes(const char *arg)
 	int		j;
 	char	quote;
 	size_t	len;
-
+	
 	if (!arg)
 		return (NULL);
 	len = ft_strlen(arg);
@@ -112,7 +71,7 @@ char	*remove_quotes(const char *arg)
 			while (arg[i] && arg[i] != quote)
 				result[j++] = arg[i++];
 			if (arg[i] == quote)
-				i++; // Saltar el cierre de comillas
+				i++;
 		}
 		else
 			result[j++] = arg[i++];
@@ -124,7 +83,6 @@ char	*remove_quotes(const char *arg)
 void	clean_arguments(t_command *cmd)
 {
 	int		i;
-	char	*expanded;
 	char	*cleaned;
 
 	if (!cmd || !cmd->argv)
@@ -132,10 +90,87 @@ void	clean_arguments(t_command *cmd)
 	i = 0;
 	while (cmd->argv[i])
 	{
-		expanded = expand_variables_simple(cmd->argv[i]);
-		cleaned = remove_quotes(expanded);
+		cleaned = remove_quotes(cmd->argv[i]);
 		free(cmd->argv[i]);
 		cmd->argv[i] = cleaned;
 		i++;
 	}
+}
+
+void	expand_token(t_token *token, t_env *env, int status)
+{
+	char	*expanded;
+	char	*cleaned;
+	size_t	len;
+
+	if (!token || !token->value)
+		return ;
+	len = ft_strlen(token->value);
+	if ((token->value[0] == '\'' && token->value[len - 1] == '\''))
+	{
+		cleaned = remove_quotes(token->value);
+		free(token->value);
+		token->value = cleaned;
+		return ;
+	}
+	expanded = expand_variables(token->value, env, status);
+	if (token->value[0] == '"' && token->value[len - 1] == '"')
+	{
+		free(token->value);
+		token->value = expanded;
+		return ;
+	}
+	cleaned = remove_quotes(expanded);
+	free(token->value);
+	free(expanded);
+	token->value = cleaned;
+}
+
+void	parser(t_command **commands, t_token *tokens, t_shell *shell)
+{
+	int				added;
+	t_command		*command;
+	t_token_type	prev_type;
+
+	prev_type = -1;
+	command = NULL;
+	if (!tokens || !can_execute(tokens))
+		return ;
+	command = create_command();
+	while (tokens)
+	{
+		expand_token(tokens, shell->env, shell->status);
+		if (tokens->token_type == T_COMMAND || tokens->token_type == T_ARGV
+			|| tokens->token_type == T_FLAG)
+		{
+			if (prev_type != T_REDIRECT_IN && prev_type != T_REDIRECT_OUT
+				&& prev_type != T_APPEND && prev_type != T_HEREDOC)
+				add_args_command(command, tokens->value);
+		}
+		else
+			update_command(command, tokens);
+		if (tokens->token_type == T_PIPE)
+		{
+			add_command_list(commands, command);
+			command = create_command();
+			if (!command)
+				free_command_list(*commands);
+			added = 1;
+		}
+		else if (tokens->token_type == T_HEREDOC)
+		{
+			int fd = create_heredoc(tokens->next->value, shell->env);
+			if (fd == -1)
+				return ;
+			command->heredoc = fd;
+		}
+		else
+			added = 0;
+		prev_type = tokens->token_type;
+		tokens = tokens->next;
+	}
+	if (command && !added)
+		add_command_list(commands, command);
+	else
+		free_command(command);
 }

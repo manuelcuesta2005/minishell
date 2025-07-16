@@ -13,38 +13,11 @@
 #include "minishell.h"
 #include <stdio.h>
 
-void	print_command(t_command *cmd)
-{
-	int	i;
-
-	i = 0;
-	while (cmd)
-	{
-		printf("=== Comando ===\n");
-		// Mostrar argumentos
-		if (cmd->argv)
-		{
-			printf("argv:\n");
-			while (cmd->argv[i])
-			{
-				printf("  [%d]: %s\n", i, cmd->argv[i]);
-				i++;
-			}
-			i = 0;
-		}
-		else
-			printf("argv: NULL\n");
-		// Mostrar redirecciones y heredoc
-		printf("infile:  %s\n", cmd->infile ? cmd->infile : "NULL");
-		printf("outfile: %s\n", cmd->outfile ? cmd->outfile : "NULL");
-		printf("heredoc: %s\n", cmd->heredoc ? cmd->heredoc : "NULL");
-		printf("append:  %s\n", cmd->append ? cmd->append : "NULL");
-		// Mostrar si hay pipe
-		printf("pipe:    %d\n", cmd->pipe);
-		printf("=============\n\n");
-		cmd = cmd->next;
-	}
-}
+t_global_state g_minishell = {
+	.context = 0,
+	.status = 0,
+	.trigered = 0
+};
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -71,8 +44,7 @@ int	main(int argc, char **argv, char **envp)
 		pre_process(minishell);
 		minishell->tokens = lexer(minishell->input);
 		minishell->commands = NULL;
-		parser(&minishell->commands, minishell->tokens);
-		print_command(minishell->commands);
+		parser(&minishell->commands, minishell->tokens, minishell);
 		if (minishell->commands)
 		{
 			cmd = minishell->commands;

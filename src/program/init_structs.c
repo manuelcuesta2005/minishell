@@ -46,7 +46,7 @@ t_shell	*init_minishell(void)
 	if (!minishell)
 		return (NULL);
 	minishell->input = NULL;
-	minishell->history = 0;
+	minishell->status = 0;
 	minishell->tokens = NULL;
 	minishell->commands = NULL;
 	minishell->env = init_env();
