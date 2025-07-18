@@ -13,15 +13,6 @@
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
-typedef struct s_global_state 
-{
-	int	context;
-	int	status;
-	int	trigered;
-}	t_global_state;
-
-extern t_global_state g_minishell;
-
 typedef enum e_token_type
 {
 	T_COMMAND,
@@ -81,11 +72,11 @@ typedef struct s_shell
 
 typedef struct s_exec_child_args
 {
-    t_shell     *shell;
-    t_command   *cmd;
-    int         **pipes;
-    int         index;
-    int         cmd_count;
-}   t_exec_child_args;
+	t_shell				*shell;
+	t_command			*cmd;
+	int					**pipes;
+	int					index;
+	int					cmd_count;
+}						t_exec_child_args;
 
 #endif

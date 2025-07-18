@@ -21,7 +21,7 @@ void	put_error(void)
 
 static int	apply_redirs(t_command *command)
 {
-	if (command->heredoc != -1)
+	if (command->heredoc != -1 && !command->pipe)
 	{
 		if (dup2(command->heredoc, STDIN_FILENO) == -1)
 		{

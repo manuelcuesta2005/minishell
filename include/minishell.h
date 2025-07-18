@@ -28,6 +28,9 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+// global
+extern int g_status;
+
 // Init program
 t_token		*init_tokens(void);
 t_env		*init_env(void);
@@ -51,18 +54,18 @@ void		ft_exit(char **arg, t_command *cmd, t_shell *shell);
 
 // built-ins utils
 
-bool	append_env_var(t_env **env, char *key, char *value);
-bool	set_env_var(t_shell *data, char *key, char *value);
-void	free_str_tab(char **tab);
-char	**get_key_value_pair(char *argv);
-bool	is_valid_env_var_key(char *var);
-t_env	*get_env_var(t_env *env, char *key);
-void	set_env(t_env **env, const char *key, const char *value);
-char	*get_env_value(t_env *env, const char *key);
-char	*get_cd_target(t_shell *env, char *arg);
-char	*get_current_directory(char *cwd);
-int		change_directory(const char *arg, char *oldpwd);
-int		update_env_vars(t_shell *env, char *cwd, char *oldpwd);
+bool		append_env_var(t_env **env, char *key, char *value);
+bool		set_env_var(t_shell *data, char *key, char *value);
+void		free_str_tab(char **tab);
+char		**get_key_value_pair(char *argv);
+bool		is_valid_env_var_key(char *var);
+t_env		*get_env_var(t_env *env, char *key);
+void		set_env(t_env **env, const char *key, const char *value);
+char		*get_env_value(t_env *env, const char *key);
+char		*get_cd_target(t_shell *env, char *arg);
+char		*get_current_directory(char *cwd);
+int			change_directory(const char *arg, char *oldpwd);
+int			update_env_vars(t_shell *env, char *cwd, char *oldpwd);
 
 // Lexer utils
 char		*remove_spaces(char *input);
@@ -97,7 +100,7 @@ int			redirect_output(const char *filename);
 int			redirect_output_append(const char *filename);
 int			handle_heredoc(const char *delimiter);
 int			handle_redirection(const char *operator, const char * target);
-int			create_heredoc(const char *delimiter, t_env *env);
+int			create_heredoc(const char *delimiter, t_shell *shell);
 
 // Free memory
 void		free_env_list(t_env *env);

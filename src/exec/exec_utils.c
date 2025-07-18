@@ -26,7 +26,7 @@ int	exec_builtin(t_shell *shell, t_command *command)
 	else if (ft_strncmp(name_command, "pwd", 3) == 0)
 		return (ft_pwd());
 	else if (ft_strncmp(name_command, "cd", 2) == 0)
-		return(ft_cd(shell, command->argv[1]));
+		return (ft_cd(shell, command->argv[1]));
 	else if (ft_strcmp(name_command, "export") == 0)
 		return (ft_export(shell, command->argv));
 	else if (ft_strcmp(name_command, "exit") == 0)

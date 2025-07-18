@@ -3,21 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:26:38 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/01 14:26:42 by mcuesta-         ###   ########.fr       */
+/*   Updated: 2025/07/18 12:12:38 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "minishell.h"
-#include <stdio.h>
 
-t_global_state g_minishell = {
-	.context = 0,
-	.status = 0,
-	.trigered = 0
-};
+extern int	g_status;
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -31,6 +25,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	get_variables(&minishell->env, envp);
 	init_signals();
+	g_status = 0;
 	while (1)
 	{
 		minishell->input = readline("\033[1;34m⮞ \033[1;36m[minishell]\033[1;34m ⮜ \033[0;32mready$ \033[0m");

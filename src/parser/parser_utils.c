@@ -23,7 +23,7 @@ t_command	*create_command(void)
 	new_command->infile = NULL;
 	new_command->outfile = NULL;
 	new_command->append = NULL;
-	new_command->heredoc = 0;
+	new_command->heredoc = -1;
 	new_command->pipe = 0;
 	new_command->next = NULL;
 	return (new_command);
@@ -51,14 +51,14 @@ void	update_command(t_command *cmd, t_token *token)
 		free(*target);
 		*target = value;
 	}
-	else if (token->token_type == T_PIPE)
-	{
-		cmd->pipe = 1;
-		free(value);
-	}
 	else if (token->token_type == T_HEREDOC)
 	{
 		cmd->heredoc = 1;
+		free(value);
+	}
+	else if (token->token_type == T_PIPE)
+	{
+		cmd->pipe = 1;
 		free(value);
 	}
 }

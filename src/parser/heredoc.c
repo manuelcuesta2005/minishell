@@ -1,35 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mcuesta- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/18 12:20:06 by mcuesta-          #+#    #+#             */
+/*   Updated: 2025/07/18 12:20:08 by mcuesta-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int is_quoted(const char *str)
-{
-    size_t length;
+extern int	g_status;
 
-    length = ft_strlen(str);
-    if (!length)
-        return (0);
-    if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"'))
-        return (1);
-    return (0);
+int	is_quoted(const char *str)
+{
+	size_t	length;
+
+	length = ft_strlen(str);
+	if (!length)
+		return (0);
+	if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"'
+			&& str[length - 1] == '"'))
+		return (1);
+	return (0);
 }
 
 static char	*strip_quotes(const char *str)
 {
-	size_t	len = ft_strlen(str);
+	size_t	len;
 
-	if ((str[0] == '\'' && str[len - 1] == '\'') ||
-		(str[0] == '"' && str[len - 1] == '"'))
+	len = ft_strlen(str);
+	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len
+			- 1] == '"'))
 		return (ft_substr(str, 1, len - 2));
 	return (ft_strdup(str));
 }
 
-static void	read_heredoc_loop(int fd, const char *delim, int expand, t_env *env)
+static void	read_heredoc_loop(int fd, const char *delim, int expand,
+		t_shell *shell)
 {
 	char	*line;
 	char	*expanded;
 
 	rl_catch_signals = 0;
 	signal(SIGINT, SIG_DFL);
-
 	while (1)
 	{
 		line = readline("Heredoc> ");
@@ -40,7 +56,7 @@ static void	read_heredoc_loop(int fd, const char *delim, int expand, t_env *env)
 		}
 		if (expand)
 		{
-			expanded = expand_variables(line, env, g_minishell.status);
+			expanded = expand_variables(line, shell->env, shell->status);
 			write(fd, expanded, ft_strlen(expanded));
 			write(fd, "\n", 1);
 			free(expanded);
@@ -54,7 +70,7 @@ static void	read_heredoc_loop(int fd, const char *delim, int expand, t_env *env)
 	}
 }
 
-int	create_heredoc(const char *delimiter, t_env *env)
+int	create_heredoc(const char *delimiter, t_shell *shell)
 {
 	int		pipefd[2];
 	pid_t	pid;
@@ -64,13 +80,13 @@ int	create_heredoc(const char *delimiter, t_env *env)
 
 	if (pipe(pipefd) == -1 || !delim_clean)
 		return (-1);
-	g_minishell.context = 2; // heredoc
+	g_status = 2;
 	pid = fork();
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		close(pipefd[0]);
-		read_heredoc_loop(pipefd[1], delim_clean, expand, env);
+		read_heredoc_loop(pipefd[1], delim_clean, expand, shell);
 		free(delim_clean);
 		close(pipefd[1]);
 		exit(0);
@@ -78,7 +94,7 @@ int	create_heredoc(const char *delimiter, t_env *env)
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
 	free(delim_clean);
-	g_minishell.context = 0; // vuelve al loop principal
+	g_status = 0;
 	if (WIFSIGNALED(status) || WEXITSTATUS(status) != 0)
 	{
 		close(pipefd[0]);
