@@ -6,13 +6,12 @@
 /*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:39:21 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/07 13:39:10 by nroson-m         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:34:40 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include "../ft_printf/ft_printf.h"
 # include "../libft/libft.h"
 # include "structs.h"
 # include <errno.h>
@@ -28,8 +27,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-// global
-extern int g_status;
+# define INPUT "\033[1;34m⮞ \033[1;36m[minishell]\033[1;34m ⮜ \033[0;32mready$ \033[0m"
 
 // Init program
 t_token		*init_tokens(void);
@@ -48,12 +46,11 @@ int			ft_echo(char **args);
 int			ft_unset(char **a, t_shell *data);
 int			ft_env(t_shell *data, char **args);
 int			ft_pwd(void);
-int			ft_cd(t_shell *env, char *arg);
+int			ft_cd(t_shell *env, char **args);
 int			ft_export(t_shell *data, char **args);
 void		ft_exit(char **arg, t_command *cmd, t_shell *shell);
 
 // built-ins utils
-
 bool		append_env_var(t_env **env, char *key, char *value);
 bool		set_env_var(t_shell *data, char *key, char *value);
 void		free_str_tab(char **tab);
@@ -72,7 +69,7 @@ char		*remove_spaces(char *input);
 void		normalize_spaces(char *input);
 void		quotes_manage(char *input);
 void		restore_quotes(char *input);
-int			check_quotes(char *input);
+int			should_expand(char *str);
 void		pre_process(t_shell *shell);
 t_token		*create_token(char *token, t_token_type token_type);
 
@@ -80,7 +77,7 @@ t_token		*create_token(char *token, t_token_type token_type);
 int			is_command(char *token);
 int			is_redirect(char *input);
 t_token		*create_token(char *token, t_token_type token_type);
-t_token		*lexer(char *input);
+t_token		*lexer(t_shell *shell, char *input);
 
 // Parser
 t_command	*create_command(void);
@@ -91,7 +88,6 @@ void		add_command_list(t_command **commands, t_command *new);
 int			can_execute(t_token *tokens);
 void		parser(t_command **commands, t_token *tokens, t_shell *shell);
 char		*remove_quotes(const char *arg);
-void		clean_arguments(t_command *cmd);
 char		*expand_variables(const char *input, t_env *env, int last_status);
 
 // redirect
@@ -99,7 +95,7 @@ int			redirect_input(const char *filename);
 int			redirect_output(const char *filename);
 int			redirect_output_append(const char *filename);
 int			handle_heredoc(const char *delimiter);
-int			handle_redirection(const char *operator, const char * target);
+int			handle_redirection(const char *operator, const char *target);
 int			create_heredoc(const char *delimiter, t_shell *shell);
 
 // Free memory
@@ -111,8 +107,16 @@ void		free_minishell(t_shell *minishell);
 
 // Executer
 void		init_signals(void);
+void		put_error(void);
+int			apply_redirs(t_command *command);
 int			exec_builtin(t_shell *shell, t_command *command);
+char		*find_executable(char *command, t_env *envp);
+int			executor_with_pipes(t_shell *shell);
+int			only_execute(t_shell *shell, t_command *command, t_env *envp);
 char		*filter_path(t_env *envp, char *key);
+int			count_commands(t_command *commands);
+void		close_and_free_pipes(int **pipes, int count);
+void		close_all_pipes_in_child(int **pipes, int count);
 int			executor(t_shell *shell);
 
 // Utils

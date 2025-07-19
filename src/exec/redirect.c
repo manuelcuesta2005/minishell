@@ -80,9 +80,8 @@ int	handle_heredoc(const char *delimiter)
 		free(line);
 	}
 	close(pipefd[1]);
-	return (pipefd[0]); // devolvemos el FD del heredoc
+	return (pipefd[0]);
 }
-
 
 int	handle_redirection(const char *operator, const char *target)
 {

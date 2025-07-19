@@ -65,20 +65,24 @@ static char	*extract_next_token(char *input, int *i)
 			quote = input[j];
 		else if (input[j] == quote)
 			quote = 0;
-		else if (input[j] == ' ' && quote == 0)
+		else if (quote == 0 && (input[j] == ' ' || input[j] == '|'
+				|| input[j] == '<' || input[j] == '>'))
 			break ;
 		j++;
 	}
+	if (j == start)
+		j++;
 	*i = j;
 	return (ft_substr(input, start, j - start));
 }
 
-static void	process_token(char *input, int *i, t_token **tokens)
+static void	process_token(char *input, int *i, t_token **tokens, t_shell *shell)
 {
 	t_token			*new_token;
 	t_token_type	type;
 	char			*token_str;
-	char			*cleaned;
+	char			*processed;
+	char			*expanded;
 
 	token_str = extract_next_token(input, i);
 	if (!token_str || token_str[0] == '\0')
@@ -86,15 +90,21 @@ static void	process_token(char *input, int *i, t_token **tokens)
 		free(token_str);
 		return ;
 	}
-	cleaned = remove_quotes(token_str);
+	if (should_expand(token_str))
+	{
+		expanded = expand_variables(token_str, shell->env, shell->status);
+		free(token_str);
+		token_str = expanded;
+	}
+	processed = remove_quotes(token_str);
 	free(token_str);
-	type = get_token_type(cleaned);
-	new_token = create_token(cleaned, type);
-	free(cleaned);
+	type = get_token_type(processed);
+	new_token = create_token(processed, type);
+	free(processed);
 	token_lstadd_back(tokens, new_token);
 }
 
-t_token	*lexer(char *input)
+t_token	*lexer(t_shell *shell, char *input)
 {
 	t_token	*tokens;
 	int		i;
@@ -102,6 +112,6 @@ t_token	*lexer(char *input)
 	tokens = NULL;
 	i = 0;
 	while (input[i])
-		process_token(input, &i, &tokens);
+		process_token(input, &i, &tokens, shell);
 	return (tokens);
 }

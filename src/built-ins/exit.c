@@ -6,7 +6,7 @@
 /*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:00:59 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/07 13:17:22 by nroson-m         ###   ########.fr       */
+/*   Updated: 2025/07/19 17:27:04 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,16 +87,26 @@ int	ms_check_exit_arg(char *arg, t_shell *shell)
 
 void	ft_exit(char **arg, t_command *cmd, t_shell *shell)
 {
-	if (arg && arg[0])
+	long long	exit_code;
+
+	printf("exit\n");
+	if (arg && arg[1])
 	{
-		if (arg[1] && ms_check_exit_arg(arg[1], shell) == 0 && arg[2])
+		if (!is_numeric(arg[1]))
+		{
+			printf("minishell: exit: %s: numeric argument required\n", arg[1]);
+			free_exit(cmd, shell, 2);
+		}
+		if (arg[2])
 		{
 			printf("minishell: exit: too many arguments\n");
+			shell->status = 1;
 			shell->exit = 1;
 			return ;
 		}
+		exit_code = ft_atoll(arg[1]);
+		exit_code = (unsigned char)exit_code;
+		free_exit(cmd, shell, exit_code);
 	}
-	printf("exit\n");
-	free_exit(cmd, shell, 2);
-	exit(shell->exit);
+	free_exit(cmd, shell, (unsigned char)shell->exit);
 }

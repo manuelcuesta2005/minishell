@@ -46,22 +46,60 @@ int	is_redirect(char *input)
 	return (0);
 }
 
-int	check_quotes(char *input)
+char	*remove_quotes(const char *arg)
 {
+	char	*result;
 	int		i;
+	int		j;
 	char	quote;
+	size_t	len;
+
+	if (!arg)
+		return (NULL);
+	len = ft_strlen(arg);
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (arg[i])
+	{
+		if ((arg[i] == '\'' || arg[i] == '"') && quote == 0)
+			quote = arg[i++];
+		while (quote && arg[i] && arg[i] != quote)
+			result[j++] = arg[i++];
+		if (quote && arg[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		while (!quote && arg[i] && arg[i] != '\'' && arg[i] != '"')
+			result[j++] = arg[i++];
+	}
+	result[j] = '\0';
+	return (result);
+}
+
+int	should_expand(char *str)
+{
+	int	i;
+	int	in_single;
+	int	in_double;
 
 	i = 0;
-	quote = 0;
-	while (input[i])
+	in_single = 0;
+	in_double = 0;
+	while (str[i])
 	{
-		if ((input[i] == '\'' || input[i] == '"') && quote == 0)
-			quote = input[i];
-		else if (input[i] == quote)
-			quote = 0;
+		if (str[i] == '\'' && !in_double)
+			in_single = !in_single;
+		else if (str[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (str[i] == '$' && !in_single)
+			return (1);
 		i++;
 	}
-	return (quote == 0);
+	return (0);
 }
 
 t_token	*create_token(char *token, t_token_type token_type)

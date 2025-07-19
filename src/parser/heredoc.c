@@ -33,7 +33,7 @@ static char	*strip_quotes(const char *str)
 
 	len = ft_strlen(str);
 	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len
-			- 1] == '"'))
+		- 1] == '"'))
 		return (ft_substr(str, 1, len - 2));
 	return (ft_strdup(str));
 }
@@ -74,10 +74,12 @@ int	create_heredoc(const char *delimiter, t_shell *shell)
 {
 	int		pipefd[2];
 	pid_t	pid;
+	char	*delim_clean;
+	int		expand;
 	int		status;
-	char	*delim_clean = strip_quotes(delimiter);
-	int		expand = !is_quoted(delimiter);
 
+	delim_clean = strip_quotes(delimiter);
+	expand = !is_quoted(delimiter);
 	if (pipe(pipefd) == -1 || !delim_clean)
 		return (-1);
 	g_status = 2;

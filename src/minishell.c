@@ -11,7 +11,32 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-extern int	g_status;
+static void	run_minishell(t_shell *shell, t_command *command)
+{
+	while (1)
+	{
+		shell->input = readline(INPUT);
+		if (!shell->input)
+		{
+			write(STDOUT_FILENO, "exit\n", 5);
+			break ;
+		}
+		if (shell->input[0] != '\0')
+			add_history(shell->input);
+		pre_process(shell);
+		shell->tokens = lexer(shell, shell->input);
+		shell->commands = NULL;
+		parser(&shell->commands, shell->tokens, shell);
+		if (shell->commands)
+		{
+			command = shell->commands;
+			executor(shell);
+		}
+		free(shell->input);
+		free_tokens(shell->tokens);
+		free_command_list(shell->commands);
+	}
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -20,40 +45,13 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	cmd = NULL;
 	minishell = init_minishell();
 	if (!minishell)
 		return (1);
 	get_variables(&minishell->env, envp);
 	init_signals();
-	g_status = 0;
-	while (1)
-	{
-		minishell->input = readline("\033[1;34m⮞ \033[1;36m[minishell]\033[1;34m ⮜ \033[0;32mready$ \033[0m");
-		if (!minishell->input)
-		{
-			write(STDOUT_FILENO, "exit\n", 5);
-			break ;
-		}
-		if (minishell->input[0] != '\0')
-			add_history(minishell->input);
-		pre_process(minishell);
-		minishell->tokens = lexer(minishell->input);
-		minishell->commands = NULL;
-		parser(&minishell->commands, minishell->tokens, minishell);
-		if (minishell->commands)
-		{
-			cmd = minishell->commands;
-			while (cmd)
-			{
-				clean_arguments(cmd);
-				cmd = cmd->next;
-			}
-			executor(minishell);
-		}
-		free(minishell->input);
-		free_tokens(minishell->tokens);
-		free_command_list(minishell->commands);
-	}
+	run_minishell(minishell, cmd);
 	free_env_list(minishell->env);
 	free(minishell);
 	return (0);

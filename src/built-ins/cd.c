@@ -6,7 +6,7 @@
 /*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:00:17 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/07 13:32:56 by nroson-m         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:34:02 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,18 @@ int	update_env_vars(t_shell *env, char *cwd, char *oldpwd)
 	return (0);
 }
 
-int	ft_cd(t_shell *env, char *arg)
+int	ft_cd(t_shell *env, char **args)
 {
 	char	cwd[PATH_MAX];
 	char	*oldpwd;
+	char	*arg;
 
-	arg = get_cd_target(env, arg);
+	if (args[1] && args[2])
+	{
+		ft_putendl_fd("minishell: cd: too many arguments", 2);
+		return (env->status = 1);
+	}
+	arg = get_cd_target(env, args[1]);
 	if (!arg)
 		return (1);
 	if (!get_current_directory(cwd))

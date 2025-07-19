@@ -6,7 +6,7 @@
 /*   By: nroson-m <nroson-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 14:33:37 by mcuesta-          #+#    #+#             */
-/*   Updated: 2025/07/05 12:45:08 by nroson-m         ###   ########.fr       */
+/*   Updated: 2025/07/19 18:35:28 by nroson-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ int	exec_builtin(t_shell *shell, t_command *command)
 	name_command = command->argv[0];
 	if (!name_command)
 		return (0);
-	if (ft_strncmp(name_command, "echo", 4) == 0)
+	if (ft_strcmp(name_command, "echo") == 0)
 		return (ft_echo(command->argv));
-	else if (ft_strncmp(name_command, "env", 3) == 0)
+	else if (ft_strcmp(name_command, "env") == 0)
 		return (ft_env(shell, command->argv));
-	else if (ft_strncmp(name_command, "pwd", 3) == 0)
+	else if (ft_strcmp(name_command, "pwd") == 0)
 		return (ft_pwd());
-	else if (ft_strncmp(name_command, "cd", 2) == 0)
-		return (ft_cd(shell, command->argv[1]));
+	else if (ft_strcmp(name_command, "cd") == 0)
+		return (ft_cd(shell, command->argv));
 	else if (ft_strcmp(name_command, "export") == 0)
 		return (ft_export(shell, command->argv));
 	else if (ft_strcmp(name_command, "exit") == 0)
@@ -117,4 +117,17 @@ void	ft_free_array(char **array)
 		i++;
 	}
 	free(array);
+}
+
+int	count_commands(t_command *commands)
+{
+	int	count;
+
+	count = 0;
+	while (commands)
+	{
+		count++;
+		commands = commands->next;
+	}
+	return (count);
 }

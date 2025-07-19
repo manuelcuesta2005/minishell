@@ -44,11 +44,10 @@ t_env	*get_env_var(t_env *env, char *key)
 int	ft_export(t_shell *data, char **args)
 {
 	int		i;
-	int		ret;
 	char	**tmp;
 
 	i = 1;
-	ret = EXIT_SUCCESS;
+	data->status = EXIT_SUCCESS;
 	if (!args[i])
 		return (ft_env(data, NULL));
 	while (args[i])
@@ -56,7 +55,7 @@ int	ft_export(t_shell *data, char **args)
 		if (!is_valid_env_var_key(args[i]))
 		{
 			errmsg_cmd("export", args[i], "not a valid identifier", false);
-			ret = EXIT_FAILURE;
+			data->status = EXIT_FAILURE;
 		}
 		else if (ft_strchr(args[i], '='))
 		{
@@ -67,5 +66,5 @@ int	ft_export(t_shell *data, char **args)
 		}
 		i++;
 	}
-	return (ret);
+	return (data->status);
 }
